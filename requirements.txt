@@ -1,0 +1,2 @@
+# Pure stdlib — no external dependencies needed
+# PyInstaller packages only: pyinstaller

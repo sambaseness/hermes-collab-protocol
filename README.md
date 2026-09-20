@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Public](https://img.shields.io/badge/Visibility-Public-brightgreen)](https://github.com/sambaseness/hermes-collab-protocol)
+[![CI/CD](https://github.com/sambaseness/hermes-collab-protocol/actions/workflows/ci-cd.yml/badge.svg?branch=main)](https://github.com/sambaseness/hermes-collab-protocol/actions/workflows/ci-cd.yml)
 
 Multi-device AI agent collaboration protocol. When any GitHub repo contains a `.hermes-collab.md` manifest file, Hermes agents running on different devices automatically divide work, communicate, and coordinate.
 
@@ -14,20 +15,55 @@ After the first-time setup, **`.hermes-collab.md` alone is enough**. When Hermes
 3. `project-collab.py` is automatically bootstrapped from this repo
 4. Device is ready — `claim`, `work`, `sync`
 
-The `install.sh` is only needed for the very first device that hasn't cached the skill yet.
+The `installer.py` is only needed for the very first device that hasn't cached the skill yet.
 
 ## Quick Start
 
-```bash
-# First time (one-time setup)
-curl -fsSL https://raw.githubusercontent.com/sambaseness/hermes-collab-protocol/main/install.sh | bash
+### First Time (one-time setup)
 
-# Or on any device that already has Hermes with the skill:
+```bash
+# Option 1 — Auto-install (curl | bash)
+curl -fsSL https://raw.githubusercontent.com/sambaseness/hermes-collab-protocol/main/installer.py | python3
+
+# Option 2 — Run the .exe (Windows)
+# Download hermes-collab-installer.exe from the CI/CD pipeline and double-click it
+
+# Option 3 — Run the binary (Linux/macOS)
+curl -fsSL https://raw.githubusercontent.com/sambaseness/hermes-collab-protocol/main/dist/hermes-collab-installer -o install && chmod +x install && ./install
+```
+
+### Or on any device that already has Hermes with the skill:
+
+```bash
 cd your-repo && project-collab.py init
 project-collab.py pull
 project-collab.py claim <number>
 project-collab.py work
 ```
+
+## CI/CD Pipeline
+
+Every push to `main` triggers an automated pipeline via GitHub Actions:
+
+| Job | Description | Output |
+|-----|-------------|--------|
+| **Validate** | Python syntax, lint, YAML validation | Pass/Fail |
+| **Build Windows .exe** | Compiles `installer.py` to `hermes-collab-installer.exe` via PyInstaller | `.exe` artifact |
+| **Build Linux binary** | Compiles `installer.py` to `hermes-collab-installer` binary | Binary artifact |
+| **Deploy** | Verifies all protocol files are present | Pass/Fail |
+| **Release** | Creates GitHub Release on tag push | Release with binaries |
+| **Notify** | Pipeline summary | Status |
+
+### The Windows .exe
+
+The CI/CD pipeline builds a standalone Windows `.exe` from `installer.py`:
+
+- **Does not install anything by itself** — it just runs the install logic
+- Downloads `project-collab.py`, `SKILL.md`, `reference-manifest.md` to `~/.hermes/`
+- Detects platform, creates device-label, checks dependencies
+- More user-friendly than a `.sh` script for Windows users
+
+Built automatically by GitHub Actions → available as an artifact on every push to `main`.
 
 ## How It Works — Full Workflow
 
@@ -73,6 +109,17 @@ project-collab.py sync          # Push state and PR updates
 hermes cron create "project sync" --script project-collab.py --schedule "every 30 minutes"
 ```
 
+## Claiming & Assignment
+
+The claiming flow:
+1. **Pull**: `project-collab.py pull` — fetch latest issues
+2. **View**: `project-collab.py status` — see who has what
+3. **Claim**: `project-collab.py claim <number>` — claim an unassigned issue
+4. **Work**: `project-collab.py work` — start working on claimed tasks
+5. **Sync**: `project-collab.py sync` — push state, create PRs
+
+Only one device can claim an issue at a time. Unclaimed issues are available for any device.
+
 ## Commands
 
 ```bash
@@ -90,7 +137,7 @@ project-collab.py project       # List project board items
 
 ## Branch Policy
 
-- **`main`**: Never committed to directly. Protected branch.
+- **`main`**: Never committed to directly. Protected branch. CI/CD runs here.
 - **`develop`**: Integration branch. All devices push here.
 - **`feature/*`**: Individual task branches branched from `develop`.
 - Each PR must be reviewed by at least one other device before merging to `develop`.
@@ -99,7 +146,7 @@ project-collab.py project       # List project board items
 
 OpenCode is the primary agent. Hermes orchestrates; OpenCode and Codex execute tasks.
 
-| Agent | Best For | When to Use |
+|| Agent | Best For | When to Use |
 |-------|----------|-------------|
 | Hermes | Orchestration, full-stack coordination | Lead tasks, complex coordination |
 | OpenCode | Lightweight coding tasks | PR checks, tests, quick fixes |
@@ -113,6 +160,8 @@ OpenCode is the primary agent. Hermes orchestrates; OpenCode and Codex execute t
 - **GitHub integration**: Issues, Discussions, Projects, PRs via `gh` CLI
 - **Multi-agent**: Supports hermes, opencode, codex
 - **Cron-ready**: Automatic sync every 30 minutes
+- **CI/CD**: Automated builds and releases via GitHub Actions
+- **Cross-platform**: `.exe` for Windows, binary for Linux/macOS
 
 ## Requirements
 
@@ -130,18 +179,16 @@ OpenCode is the primary agent. Hermes orchestrates; OpenCode and Codex execute t
 | `project-collab.py` | `~/.hermes/scripts/` | Orchestration script |
 | `SKILL.md` | `~/.hermes/skills/hermes-collab/` | Skill definition |
 | `reference-manifest.md` | Protocol repo | `.hermes-collab.md` template |
-| `install.sh` | Protocol repo | One-command device setup |
+| `installer.py` | Protocol repo | Cross-platform Python installer |
+| `install.sh` | Protocol repo | Legacy curl|bash installer |
+| `.github/workflows/ci-cd.yml` | Protocol repo | CI/CD pipeline (builds .exe) |
 
 ## Example: Bitiko
 
 The [bitiko](https://github.com/biramth/bitiko) project uses this protocol:
-- **Team**: sambaseness (hermes lead), biramth (opencode contributor)
+- **Team**: sambaseness (hermes co-author), biramth (opencode author)
 - **Branch**: `develop` with `feature/*` branches
 - **Workflow**: `claim` → `work` → `sync` → PR to `develop`
-
-## Agent Notes
-
-> Other agents may be available in the ecosystem. See the main repo for details.
 
 ## License
 
