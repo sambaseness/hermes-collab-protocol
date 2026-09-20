@@ -1,19 +1,32 @@
 # Hermes Collab Protocol
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Public](https://img.shields.io/badge/Visibility-Public-brightgreen)](https://github.com/sambaseness/hermes-collab-protocol)
 
 Multi-device AI agent collaboration protocol. When any GitHub repo contains a `.hermes-collab.md` manifest file, Hermes agents running on different devices automatically divide work, communicate, and coordinate.
+
+## No Install Script Required
+
+After the first-time setup, **`.hermes-collab.md` alone is enough**. When Hermes clones a repo with this manifest:
+
+1. The `hermes-collab` skill detects `.hermes-collab.md`
+2. Skill activates the collaboration protocol
+3. `project-collab.py` is automatically bootstrapped from this repo
+4. Device is ready — `claim`, `work`, `sync`
+
+The `install.sh` is only needed for the very first device that hasn't cached the skill yet.
 
 ## Quick Start
 
 ```bash
-# On each device, run the installer
+# First time (one-time setup)
 curl -fsSL https://raw.githubusercontent.com/sambaseness/hermes-collab-protocol/main/install.sh | bash
 
-# Or clone and run manually
-git clone https://github.com/sambaseness/hermes-collab-protocol.git
-cd hermes-collab-protocol
-./install.sh
+# Or on any device that already has Hermes with the skill:
+cd your-repo && project-collab.py init
+project-collab.py pull
+project-collab.py claim <number>
+project-collab.py work
 ```
 
 ## How It Works
@@ -34,10 +47,12 @@ project-collab.py claim <num>   # Claim an issue
 project-collab.py work          # Start working on claimed tasks
 project-collab.py sync          # Push state and PR updates
 project-collab.py report        # Generate team progress report
+project-collab.py bootstrap     # Download project-collab.py from GitHub
 ```
 
 ## Key Features
 
+- **Self-bootstrapping**: `.hermes-collab.md` + skill auto-downloads `project-collab.py`
 - **Develop-only policy**: Never commit to `main`, all work happens on `develop`
 - **Device identification**: Auto-detects via hostname + `~/.config/device-label`
 - **GitHub integration**: Issues, Discussions, Projects, PRs all via `gh` CLI
@@ -48,8 +63,8 @@ project-collab.py report        # Generate team progress report
 
 - `gh` CLI authenticated with GitHub
 - `git` configured
-- Agent CLI (`hermes`, `claude`, `codex`, or `opencode`) for task execution
 - Python 3.8+
+- Agent CLI (`hermes`, `claude`, `codex`, or `opencode`) for task execution
 
 ## Protocol Files
 

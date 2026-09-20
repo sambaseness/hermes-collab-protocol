@@ -71,6 +71,30 @@ def get_device_label():
         return "fedora"
     return "unknown"
 
+
+def bootstrap_script(repo_path: Path):
+    """Download project-collab.py from GitHub if not found locally.
+    
+    This allows a new device to set up without install.sh — Hermes detects
+    .hermes-collab.md, loads the hermes-collab skill, which tells it to
+    call this function to download the script from the protocol repo.
+    """
+    local_script = Path.home() / '.hermes' / 'scripts' / 'project-collab.py'
+    if local_script.exists():
+        return str(local_script)
+    
+    # Download from GitHub
+    url = 'https://raw.githubusercontent.com/sambaseness/hermes-collab-protocol/main/project-collab.py'
+    try:
+        import urllib.request
+        urllib.request.urlretrieve(url, local_script)
+        local_script.chmod(0o755)
+        print(f'Bootstrapped project-collab.py to {local_script}')
+        return str(local_script)
+    except Exception as e:
+        print(f'Bootstrap failed: {e}')
+        return None
+
 def run_git(args, cwd=None, capture=True):
     """Run git command and return result."""
     try:
@@ -676,7 +700,9 @@ def cmd_project(repo_path: Path):
 def main():
     if len(sys.argv) < 2:
         print("Usage: project-collab.py [command] [args]")
-        print("Commands: init, status, pull, claim <num>, work, sync, report, discussions, project")
+        print("Commands: init, status, pull, claim <num>, work, sync, report, discussions, project, bootstrap")
+        print()
+        print("bootstrap   - Download project-collab.py from GitHub (for new devices without install.sh)")
         sys.exit(1)
 
     repo_path = Path.cwd()
@@ -691,7 +717,15 @@ def main():
         print("Error: Not in a git repository.")
         sys.exit(1)
 
-    if cmd == "init":
+    if cmd == "bootstrap":
+        result = bootstrap_script(repo_path)
+        if result:
+            print(f"Bootstrap complete. Script available at {result}")
+            sys.exit(0)
+        else:
+            print("Bootstrap failed. Try running install.sh instead.")
+            sys.exit(1)
+    elif cmd == "init":
         cmd_init(repo_path)
     elif cmd == "status":
         cmd_status(repo_path)
