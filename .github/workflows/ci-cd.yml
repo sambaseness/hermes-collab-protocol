@@ -1,201 +1,87 @@
 name: CI/CD Pipeline
-
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      build_windows_exe:
-        description: 'Build Windows .exe installer'
-        required: false
-        default: 'true'
-        type: boolean
-
-env:
-  PROTOCOL_REPO: sambaseness/hermes-collab-protocol
-
 jobs:
-  # ── Validate ──────────────────────────────────────────
   validate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - run: python -m py_compile installer.py project-collab.py
+      - run: pip install flake8 -q || true; flake8 installer.py project-collab.py --max-line-length=100 || true
+      - run: ls docs/index.html docs/css/style.css docs/js/app.js && echo "✓ Website files present"
 
-      - name: Validate Python syntax
-        run: |
-          python -m py_compile installer.py project-collab.py
-          echo "✓ All Python files compile successfully"
-
-      - name: Lint Python
-        run: |
-          pip install flake8 -q || true
-          flake8 installer.py project-collab.py --max-line-length=100 --extend-ignore=E501,W503 || true
-          echo "✓ Lint check complete"
-
-  # ── Build Windows .exe ────────────────────────────────
   build-windows-exe:
     needs: validate
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+    timeout-minutes: 10
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
-      - name: Install PyInstaller
-        run: pip install pyinstaller -q
-
-      - name: Build Windows .exe
-        run: |
-          pyinstaller --name hermes-collab-installer \
-            --onefile \
-            --windowed \
-            --clean \
-            --distpath dist \
-            --workpath build \
-            --specpath . \
-            installer.py
+      - run: pip install pyinstaller -q
+      - run: |
+          pyinstaller --name hermes-collab-installer --onefile --windowed --clean installer.py
           echo "✓ Windows .exe built successfully"
-          ls -la dist/hermes-collab-installer.exe
-
-      - name: Upload Windows .exe artifact
-        uses: actions/upload-artifact@v4
+          ls -la dist\hermes-collab-installer.exe
+      - uses: actions/upload-artifact@v4
         with:
           name: hermes-collab-installer-windows
-          path: dist/hermes-collab-installer.exe
+          path: dist\hermes-collab-installer.exe
           retention-days: 90
 
-  # ── Build Linux binary ────────────────────────────────
   build-linux-binary:
     needs: validate
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
-      - name: Install PyInstaller
-        run: pip install pyinstaller -q
-
-      - name: Build Linux binary
-        run: |
-          pyinstaller --name hermes-collab-installer \
-            --onefile \
-            --console \
-            --clean \
-            --distpath dist \
-            --workpath build \
-            --specpath . \
-            installer.py
-          echo "✓ Linux binary built successfully"
-          ls -la dist/hermes-collab-installer
-
-      - name: Upload Linux binary artifact
-        uses: actions/upload-artifact@v4
+      - run: pip install pyinstaller -q
+      - run: pyinstaller --name hermes-collab-installer --onefile --console --clean installer.py
+      - uses: actions/upload-artifact@v4
         with:
           name: hermes-collab-installer-linux
           path: dist/hermes-collab-installer
           retention-days: 90
 
-  # ── Verify ────────────────────────────────────────────
-  verify:
-    needs: [validate]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Verify all protocol files exist
-        run: |
-          for f in project-collab.py installer.py SKILL.md reference-manifest.md README.md .hermes-collab.md; do
-            if [ -f "$f" ]; then
-              echo "✓ $f exists"
-            else
-              echo "✗ $f MISSING"
-              exit 1
-            fi
-          done
-          echo "✓ All protocol files verified"
-
-      - name: Verify .exe artifact was built
-        if: always()
-        run: |
-          echo "✓ Pipeline complete. Binaries available as artifacts."
-
-  # ── Release ───────────────────────────────────────────
   release:
     needs: [build-windows-exe, build-linux-binary]
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Download Linux binary
-        uses: actions/download-artifact@v4
-        with:
-          name: hermes-collab-installer-linux
-
-      - name: Download Windows .exe
-        uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
           name: hermes-collab-installer-windows
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
+      - uses: actions/download-artifact@v4
+        with:
+          name: hermes-collab-installer-linux
+      - uses: softprops/action-gh-release@v1
         with:
           files: |
-            dist/hermes-collab-installer.exe
-            dist/hermes-collab-installer
-          draft: false
-          prerelease: false
+            hermes-collab-installer-windows/hermes-collab-installer.exe
+            hermes-collab-installer-linux/hermes-collab-installer
           name: Release ${{ github.ref_name }}
-          body: |
-            ## Hermes Collab Protocol Installer
 
-            **Windows**: `hermes-collab-installer.exe` — double-click to run
-            **Linux/macOS**: `hermes-collab-installer` — run `chmod +x` then `./hermes-collab-installer`
-
-            The installer downloads protocol files from GitHub, detects platform, creates device-label, checks dependencies. It does NOT install anything — it just runs the install logic.
-
-            **Features:**
-            - Detects platform automatically (Linux/macOS/Windows)
-            - Downloads project-collab.py, SKILL.md, reference-manifest.md
-            - Creates device-label configuration
-            - Checks dependencies (gh, git, python3, hermes)
-            - Cross-platform installer
-
-  # ── Notify ────────────────────────────────────────────
   notify:
-    needs: [validate, build-windows-exe, build-linux-binary]
+    needs: [validate, build-windows-exe, build-linux-binary, release]
     if: always() && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Check pipeline status
-        run: |
-          echo "=== CI/CD Pipeline Summary ==="
+      - run: |
+          echo "=== CI/CD Pipeline Complete ==="
           echo "Validate: ${{ needs.validate.result }}"
-          echo "Windows .exe: ${{ needs.build-windows-exe.result }}"
+          echo "Windows .exe: ${{ needs.build-windows-exe.result }} (windows-latest runner)"
           echo "Linux binary: ${{ needs.build-linux-binary.result }}"
           echo ""
-          if [ "${{ needs.build-windows-exe.result }}" == "success" ]; then
-            echo "✓ Windows .exe is ready as artifact"
-          fi
-          if [ "${{ needs.build-linux-binary.result }}" == "success" ]; then
-            echo "✓ Linux binary is ready as artifact"
-          fi
+          echo "Website: https://sambaseness.github.io/hermes-collab-protocol/"

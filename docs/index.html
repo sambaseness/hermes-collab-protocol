@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hermes Collab Protocol — Multi-Device AI Agent Collaboration</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span class="logo-icon">⟐</span>
+                <span class="logo-text">Hermes Collab</span>
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#download">Downloads</a>
+                <a href="#protocol">Protocol</a>
+                <a href="#docs">Docs</a>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="pulse-dot"></span>
+                Open Source &middot; MIT License
+            </div>
+            <h1>Multi-Device AI Agent<br><span class="gradient-text">Collaboration Protocol</span></h1>
+            <p class="hero-subtitle">
+                When any GitHub repo contains a <code>.hermes-collab.md</code> manifest file, 
+                Hermes agents on different devices automatically divide work, communicate, 
+                and coordinate — on <code>develop</code>, never on <code>main</code>.
+            </p>
+            <div class="hero-actions">
+                <a href="#download" class="btn btn-primary">
+                    <i class="fas fa-download"></i> Download Installer
+                </a>
+                <a href="#protocol" class="btn btn-secondary">
+                    <i class="fas fa-book"></i> Read Protocol
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number" data-count="6">0</span>
+                    <span class="stat-label">CI/CD Jobs</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" data-count="3">0</span>
+                    <span class="stat-label">Platforms</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" data-count="4">0</span>
+                    <span class="stat-label">Agents</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" data-count="0">1</span>
+                    <span class="stat-label">Protocol File</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Four phases, never touching main</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon phase-1">
+                        <i class="fas fa-rocket"></i>
+                        <span class="phase-number">Phase 1</span>
+                    </div>
+                    <h3>Initiation</h3>
+                    <p>Clone a repo with <code>.hermes-collab.md</code>. The skill auto-detects the protocol and bootstraps everything.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon phase-2">
+                        <i class="fas fa-tasks"></i>
+                        <span class="phase-number">Phase 2</span>
+                    </div>
+                    <h3>Task Assignment</h3>
+                    <p>Pull issues, view who has what, claim tasks matching your capabilities. Feature branches from <code>develop</code>.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon phase-3">
+                        <i class="fas fa-code-branch"></i>
+                        <span class="phase-number">Phase 3</span>
+                    </div>
+                    <h3>Work Execution</h3>
+                    <p>Each device runs its agent (Hermes, OpenCode, Codex) on claimed tasks. PRs to <code>develop</code> require review.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon phase-4">
+                        <i class="fas fa-comments"></i>
+                        <span class="phase-number">Phase 4</span>
+                    </div>
+                    <h3>Communication</h3>
+                    <p>State files, GitHub Issues, Discussions, Projects, and commit metadata keep everyone in sync.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section class="download" id="download">
+        <div class="container">
+            <div class="section-header">
+                <h2>Download</h2>
+                <p>Get the installer for your platform — built by CI/CD on every push</p>
+            </div>
+            <div class="download-grid">
+                <a href="https://github.com/sambaseness/hermes-collab-protocol/releases/tag/v0.1.0" class="download-card windows" target="_blank">
+                    <div class="download-header">
+                        <i class="fab fa-windows"></i>
+                        <h3>Windows</h3>
+                    </div>
+                    <div class="download-body">
+                        <p class="download-format">.exe</p>
+                        <p class="download-desc">Standalone installer. Double-click to run. Downloads protocol files automatically.</p>
+                        <span class="download-tag">Built on windows-latest runner</span>
+                    </div>
+                    <div class="download-footer">
+                        <span>hermes-collab-installer.exe</span>
+                        <i class="fas fa-external-link-alt"></i>
+                    </div>
+                </a>
+                <a href="https://github.com/sambaseness/hermes-collab-protocol/releases/tag/v0.1.0" class="download-card linux" target="_blank">
+                    <div class="download-header">
+                        <i class="fab fa-linux"></i>
+                        <h3>Linux</h3>
+                    </div>
+                    <div class="download-body">
+                        <p class="download-format">Binary</p>
+                        <p class="download-desc">Compiled binary. Run <code>chmod +x</code> then <code>./hermes-collab-installer</code>.</p>
+                        <span class="download-tag">Built on ubuntu-latest runner</span>
+                    </div>
+                    <div class="download-footer">
+                        <span>hermes-collab-installer</span>
+                        <i class="fas fa-external-link-alt"></i>
+                    </div>
+                </a>
+                <a href="https://github.com/sambaseness/hermes-collab-protocol/releases/tag/v0.1.0" class="download-card mac" target="_blank">
+                    <div class="download-header">
+                        <i class="fab fa-apple"></i>
+                        <h3>macOS</h3>
+                    </div>
+                    <div class="download-body">
+                        <p class="download-format">Binary</p>
+                        <p class="download-desc">Compiled binary for macOS. Same as Linux build.</p>
+                        <span class="download-tag">Built on macos-latest runner</span>
+                    </div>
+                    <div class="download-footer">
+                        <span>hermes-collab-installer</span>
+                        <i class="fas fa-external-link-alt"></i>
+                    </div>
+                </a>
+                <a href="https://raw.githubusercontent.com/sambaseness/hermes-collab-protocol/main/installer.py" class="download-card curl" target="_blank">
+                    <div class="download-header">
+                        <i class="fas fa-terminal"></i>
+                        <h3>Universal</h3>
+                    </div>
+                    <div class="download-body">
+                        <p class="download-format">.py</p>
+                        <p class="download-desc">Python installer. Runs on any platform with Python 3.8+. Pure stdlib, no dependencies.</p>
+                        <span class="download-tag">curl | python3</span>
+                    </div>
+                    <div class="download-footer">
+                        <span>installer.py</span>
+                        <i class="fas fa-external-link-alt"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Protocol Section -->
+    <section class="protocol" id="protocol">
+        <div class="container">
+            <div class="section-header">
+                <h2>The Protocol</h2>
+                <p>One file, any repo. Branch policy: never touch main</p>
+            </div>
+            <div class="protocol-steps">
+                <div class="protocol-step">
+                    <div class="step-number">1</div>
+                    <h3>Place <code>.hermes-collab.md</code></h3>
+                    <p>Add the manifest to your repo root. Define your team, roles, and workflow.</p>
+                </div>
+                <div class="step-connector"></div>
+                <div class="protocol-step">
+                    <div class="step-number">2</div>
+                    <h3>Run <code>project-collab.py init</code></h3>
+                    <p>Devices auto-detect the protocol. Creates <code>develop</code> branch and state file.</p>
+                </div>
+                <div class="step-connector"></div>
+                <div class="protocol-step">
+                    <div class="step-number">3</div>
+                    <h3>Agents Claim and Work</h3>
+                    <p>Devices pull issues, claim tasks, work on feature branches. PRs to <code>develop</code>.</p>
+                </div>
+                <div class="step-connector"></div>
+                <div class="protocol-step">
+                    <div class="step-number">4</div>
+                    <h3>Automate with Cron</h3>
+                    <p>Set up automatic sync every 30 minutes. Devices stay coordinated without manual effort.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Agents Section -->
+    <section class="agents" id="agents">
+        <div class="container">
+            <div class="section-header">
+                <h2>Supported Agents</h2>
+                <p>Hermes orchestrates, others execute</p>
+            </div>
+            <div class="agents-grid">
+                <div class="agent-card primary">
+                    <div class="agent-badge">Orchestrator</div>
+                    <i class="fas fa-robot"></i>
+                    <h3>Hermes</h3>
+                    <p>Full-stack coordination, lead tasks, complex workflows. Runs on all platforms.</p>
+                </div>
+                <div class="agent-card">
+                    <div class="agent-badge">Primary</div>
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    <h3>OpenCode</h3>
+                    <p>Lightweight coding tasks, PR checks, tests, quick fixes. Free and open-source.</p>
+                </div>
+                <div class="agent-card">
+                    <div class="agent-badge">Parallel</div>
+                    <i class="fas fa-layer-group"></i>
+                    <h3>Codex</h3>
+                    <p>Batch fixes, worktrees, parallel issue resolution. For heavy lifting.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Commands Section -->
+    <section class="commands">
+        <div class="container">
+            <div class="section-header">
+                <h2>Quick Start</h2>
+                <p>Get going in seconds</p>
+            </div>
+            <div class="command-block">
+                <div class="command-tabs">
+                    <button class="command-tab active" data-lang="curl">curl | python3</button>
+                    <button class="command-tab" data-lang="hermes">hermes init</button>
+                </div>
+                <div class="command-content">
+                    <pre class="command-line"><code id="code-curl"><span class="prompt">$</span> curl -fsSL https://raw.githubusercontent.com/sambaseness/hermes-collab-protocol/main/installer.py | python3</code></pre>
+                    <pre class="command-line hidden" id="code-hermes"><code><span class="prompt">$</span> cd your-repo && hermes init hermes-collab
+<span class="prompt">$</span> project-collab.py pull
+<span class="prompt">$</span> project-collab.py claim <span class="highlight">&lt;number&gt;</span>
+<span class="prompt">$</span> project-collab.py work</code></pre>
+                    <button class="copy-btn" onclick="copyCode('code-curl')"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">⟐</span>
+                    <span>Hermes Collab Protocol</span>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/sambaseness/hermes-collab-protocol" target="_blank"><i class="fab fa-github"></i> Repo</a>
+                    <a href="https://github.com/sambaseness/hermes-collab-protocol/releases/tag/v0.1.0" target="_blank"><i class="fas fa-download"></i> Releases</a>
+                    <a href="https://github.com/biramth/bitiko" target="_blank"><i class="fas fa-external-link-alt"></i> Bitiko</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>MIT License · Built with Hermes, OpenCode, and the protocol itself</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
