@@ -8,7 +8,7 @@ platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [Collaboration, Multi-Device, Team, Protocol, GitHub]
-    related_skills: [claude-code, codex, opencode, hermes-agent]
+    related_skills: [opencode, codex, hermes-agent]
     repo: https://github.com/sambaseness/hermes-collab-protocol
 --
 
@@ -50,7 +50,7 @@ version: "1.0"
 project-name: string
 team:
   - device-id: string
-    agent: hermes|claude|codex|opencode
+    agent: hermes|opencode|codex
     role: string
     capabilities: [string]
 default-branch: develop
@@ -100,7 +100,7 @@ Each device:
 4. Creates a feature branch from `develop`: `feature/{issue-number}-{short-desc}`
 
 ### Phase 3: Work Execution
-- Each device runs its agent (hermes, claude, codex, opencode) on the claimed task
+- Each device runs its agent (hermes, opencode, codex) on the claimed task
 - Commits to feature branch with device metadata
 - Pushes feature branch to origin
 - Creates PR from feature branch to `develop`
@@ -136,11 +136,10 @@ hermes cron create "project sync" --script project-collab.py --schedule "every 3
 ### Agent Orchestration
 Hermes orchestrates all agent types for task execution:
 - **hermes** — Lead coordinator; can delegate to other agents
-- **claude** — Complex reasoning, security-sensitive code, architecture
-- **codex** — PR reviews, batch issue fixing, worktree-based parallel tasks
 - **opencode** — Lightweight coding, code reviews, test execution, one-shot tasks
+- **codex** — PR reviews, batch issue fixing, worktree-based parallel tasks
 
-`project-collab.py work` checks which agent CLIs are available and launches the appropriate one. OpenCode is preferred for lightweight tasks; Claude/Codex for complex multi-step work. See `~/.hermes/skills/autonomous-ai-agents/opencode/SKILL.md` for OpenCode-specific orchestration.
+`project-collab.py work` checks which agent CLIs are available and launches the appropriate one. OpenCode is preferred for lightweight tasks.
 
 ## Branch Policy
 
@@ -169,7 +168,7 @@ Git-tracked JSON structure:
       "title": "Issue title",
       "status": "unclaimed|claimed|in_progress|done",
       "assigned_to": "device-id",
-      "agent": "claude|codex|opencode|hermes",
+      "agent": "hermes|opencode|codex",
       "branch": "feature/1-short-desc",
       "claimed_at": "ISO timestamp",
       "completed_at": "ISO timestamp"
@@ -192,7 +191,7 @@ Git-tracked JSON structure:
 - Uses `git` for branch management (same patterns as `vault-sync.py`)
 - Uses `platform.node()` and `device-label` for device identification (same as `vault-sync.py`)
 - Commits include `device:` metadata in commit messages (same pattern)
-- Can trigger `claude`, `codex`, or `opencode` agents for actual work
+- Can trigger `opencode` or `codex` agents for actual work
 
 ## Setup
 

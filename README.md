@@ -46,7 +46,7 @@ Each device:
 - Creates a feature branch from `develop`: `feature/{issue-number}-{short-desc}`
 
 ### Phase 3: Work Execution
-- Each device runs its agent (hermes, claude, codex, opencode) on the claimed task
+- Each device runs its agent (hermes, opencode, codex) on the claimed task
 - Commits to feature branch with device metadata
 - Pushes feature branch to origin
 - Creates PR from feature branch to `develop`
@@ -83,7 +83,7 @@ project-collab.py claim <num>   # Claim an issue
 project-collab.py work          # Start working on claimed tasks
 project-collab.py sync          # Push state and PR updates
 project-collab.py report        # Generate team progress report
-project-collab.py bootstrap     # Download project-collab.py
+project-collab.py bootstrap     # Download project-collab.py from GitHub
 project-collab.py discussions   # List discussion topics
 project-collab.py project       # List project board items
 ```
@@ -97,10 +97,11 @@ project-collab.py project       # List project board items
 
 ## Agent Support
 
+OpenCode is the primary agent. Hermes orchestrates; OpenCode and Codex execute tasks.
+
 | Agent | Best For | When to Use |
 |-------|----------|-------------|
 | Hermes | Orchestration, full-stack coordination | Lead tasks, complex coordination |
-| Claude Code | Complex multi-step reasoning | Architecture, security code |
 | OpenCode | Lightweight coding tasks | PR checks, tests, quick fixes |
 | Codex | Parallel issue fixing | Batch fixes, worktrees |
 
@@ -110,7 +111,7 @@ project-collab.py project       # List project board items
 - **Develop-only policy**: Never commit to `main`, all work on `develop`
 - **Device identification**: Auto-detects via hostname + `~/.config/device-label`
 - **GitHub integration**: Issues, Discussions, Projects, PRs via `gh` CLI
-- **Multi-agent**: Supports hermes, claude, codex, opencode
+- **Multi-agent**: Supports hermes, opencode, codex
 - **Cron-ready**: Automatic sync every 30 minutes
 
 ## Requirements
@@ -118,7 +119,7 @@ project-collab.py project       # List project board items
 - `gh` CLI authenticated with GitHub
 - `git` configured
 - Python 3.8+
-- Agent CLI (`hermes`, `claude`, `codex`, or `opencode`) for task execution
+- Agent CLI (`hermes`, `opencode`, `codex`) for task execution
 
 ## Protocol Files
 
@@ -134,9 +135,13 @@ project-collab.py project       # List project board items
 ## Example: Bitiko
 
 The [bitiko](https://github.com/biramth/bitiko) project uses this protocol:
-- **Team**: sambaseness (hermes lead), biramth (claude contributor)
+- **Team**: sambaseness (hermes lead), biramth (opencode contributor)
 - **Branch**: `develop` with `feature/*` branches
 - **Workflow**: `claim` → `work` → `sync` → PR to `develop`
+
+## Agent Notes
+
+> Other agents may be available in the ecosystem. See the main repo for details.
 
 ## License
 

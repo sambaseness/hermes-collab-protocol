@@ -50,7 +50,7 @@ Brief description of the project.
 
 ## Agent Preferences
 - Preferred agent for this project: hermes
-- Fallback agents: claude, codex, opencode
+- Fallback agents: codex, opencode
 - Max parallel tasks per device: 2
 
 ## Onboarding
@@ -82,7 +82,7 @@ Each device must have a label file:
       "title": "Fix authentication bug",
       "status": "unclaimed|claimed|in_progress|done",
       "assigned_to": "fedora-laptop",
-      "agent": "claude",
+      "agent": "hermes",
       "branch": "feature/1-fix-auth-bug",
       "labels": ["bug", "high-priority"],
       "claimed_at": "2026-09-20 11:30:00 UTC",

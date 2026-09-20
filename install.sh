@@ -155,7 +155,7 @@ fi
 
 echo ""
 echo "Checking agent CLIs (optional — needed for task execution):"
-for agent in hermes claude codex opencode; do
+for agent in hermes opencode codex; do
     if command -v "$agent" &> /dev/null; then
         echo "  ✓ $agent found"
     else
