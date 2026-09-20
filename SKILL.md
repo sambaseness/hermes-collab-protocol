@@ -1,7 +1,7 @@
 ---
 name: hermes-collab
 description: "Multi-device AI agent collaboration protocol. Detects .hermes-collab.md manifest in any GitHub repo and orchestrates team-based AI agent work across devices via Hermes."
-version: 1.0.0
+version: 1.1.0
 author: Sambasene
 license: MIT
 platforms: [linux, macos, windows]
@@ -9,13 +9,26 @@ metadata:
   hermes:
     tags: [Collaboration, Multi-Device, Team, Protocol, GitHub]
     related_skills: [claude-code, codex, opencode, hermes-agent]
----
+    repo: https://github.com/sambaseness/hermes-collab-protocol
+--
 
 # Hermes Collab Protocol
 
 Multi-device AI agent collaboration protocol. When a GitHub repo contains a `.hermes-collab.md` manifest file, this skill activates and coordinates distributed Hermes agents across devices.
 
-## Detection
+## Self-Bootstrapping (IMPORTANT)
+
+**No install script is needed after the first device setup.** The protocol is self-bootstrapping:
+
+1. Clone any repo containing `.hermes-collab.md`
+2. Hermes loads the `hermes-collab` skill automatically
+3. Skill detects the manifest and activates the collaboration protocol
+4. `project-collab.py bootstrap` downloads the script from GitHub
+5. Device is ready to `claim`, `work`, `sync`
+
+The `install.sh` (at `https://github.com/sambaseness/hermes-collab-protocol/install.sh`) is only for the very first device that hasn't cached the skill yet. It optionally installs Hermes if missing, downloads all protocol files, and sets up the device-label. On subsequent devices, `.hermes-collab.md` + skill is sufficient.
+
+`project-collab.py` can bootstrap itself via `project-collab.py bootstrap` — it downloads `project-collab.py` from the protocol repo to `~/.hermes/scripts/`.
 
 A repo is a collaboration target when:
 1. It contains a `.hermes-collab.md` file at its root
@@ -112,12 +125,22 @@ Located at `~/.hermes/scripts/project-collab.py`. Commands:
 - `project-collab.py work` — Start working on claimed tasks
 - `project-collab.py sync` — Push state and PR updates
 - `project-collab.py report` — Generate team progress report
+- `project-collab.py bootstrap` — Download project-collab.py from GitHub (for new devices without install.sh)
 
 ### Cron Integration
 Similar to `vault-sync.py`, set up via:
 ```
 hermes cron create "project sync" --script project-collab.py --schedule "every 30 minutes"
 ```
+
+### Agent Orchestration
+Hermes orchestrates all agent types for task execution:
+- **hermes** — Lead coordinator; can delegate to other agents
+- **claude** — Complex reasoning, security-sensitive code, architecture
+- **codex** — PR reviews, batch issue fixing, worktree-based parallel tasks
+- **opencode** — Lightweight coding, code reviews, test execution, one-shot tasks
+
+`project-collab.py work` checks which agent CLIs are available and launches the appropriate one. OpenCode is preferred for lightweight tasks; Claude/Codex for complex multi-step work. See `~/.hermes/skills/autonomous-ai-agents/opencode/SKILL.md` for OpenCode-specific orchestration.
 
 ## Branch Policy
 
@@ -131,6 +154,7 @@ hermes cron create "project sync" --script project-collab.py --schedule "every 3
 Same mechanism as `vault-sync.py`:
 - Linux: `{hostname}-{device-label}` from `~/.config/device-label`
 - Windows: `{hostname}-{device-label}` from `AppData\Local\hermes\device-label`
+- macOS: `{hostname}-{device-label}` from `~/.config/device-label`
 - Each device reads its label and registers in the manifest
 
 ## State File: `.hermes-state.json`
@@ -172,11 +196,18 @@ Git-tracked JSON structure:
 
 ## Setup
 
-To enable collaboration on a repo:
-1. Place `.hermes-collab.md` at repo root
-2. Push to GitHub
-3. On each device, run `project-collab.py init`
-4. Devices automatically detect the manifest and begin collaborating
+**First-time device setup (optional):**
+```bash
+curl -fsSL https://raw.githubusercontent.com/sambaseness/hermes-collab-protocol/main/install.sh | bash
+```
+
+**On any device that already has the skill, no install script is needed:**
+```bash
+cd your-repo && project-collab.py init
+project-collab.py pull
+project-collab.py claim <number>
+project-collab.py work
+```
 
 For existing repos:
 1. Run `project-collab.py init` in the repo directory on any device
@@ -184,3 +215,5 @@ For existing repos:
 3. Other devices running `project-collab.py` will detect it on next pull
 
 See `references/manifest-template.md` for the complete manifest format specification.
+
+The protocol repo (`https://github.com/sambaseness/hermes-collab-protocol`) contains all files needed for setup and is the source for `project-collab.py bootstrap`.

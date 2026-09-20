@@ -55,10 +55,13 @@ Brief description of the project.
 
 ## Onboarding
 1. Clone the repo
-2. Run `project-collab.py init`
+2. Run `project-collab.py bootstrap` to download the orchestration script (or `project-collab.py init`)
 3. Run `project-collab.py pull` to fetch issues
 4. Run `project-collab.py claim <number>` to claim a task
 5. Run `project-collab.py work` to start
+
+### Self-Bootstrapping (no install.sh needed)
+The `hermes-collab` skill auto-activates when `.hermes-collab.md` is detected. `project-collab.py bootstrap` downloads the script from `https://github.com/sambaseness/hermes-collab-protocol`. `install.sh` is only for first-time setup on devices without the skill.
 
 ## Device Labels
 Each device must have a label file:
