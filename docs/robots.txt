@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Sitemap: https://sambaseness.github.io/hermes-collab-protocol/sitemap.xml
+
+# Block no-index paths
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+
+# Crawl delay
+Crawl-delay: 10

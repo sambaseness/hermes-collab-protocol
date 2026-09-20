@@ -4,68 +4,26 @@
 [![Public](https://img.shields.io/badge/Visibility-Public-brightgreen)](https://github.com/sambaseness/hermes-collab-protocol)
 [![CI/CD](https://github.com/sambaseness/hermes-collab-protocol/actions/workflows/ci-cd.yml/badge.svg?branch=main)](https://github.com/sambaseness/hermes-collab-protocol/actions/workflows/ci-cd.yml)
 
-Multi-device AI agent collaboration protocol. When any GitHub repo contains a `.hermes-collab.md` manifest file, Hermes agents running on different devices automatically divide work, communicate, and coordinate.
+Multi-device AI agent collaboration protocol. When any GitHub repo contains a `.hermes-collab.md` manifest file, Hermes agents running on different devices automatically divide work, communicate, and coordinate — on `develop`, never on `main`.
 
-## No Install Script Required
+---
 
-After the first-time setup, **`.hermes-collab.md` alone is enough**. When Hermes clones a repo with this manifest:
+## What It Is
 
-1. The `hermes-collab` skill detects `.hermes-collab.md`
-2. Skill activates the collaboration protocol
-3. `project-collab.py` is automatically bootstrapped from this repo
-4. Device is ready — `claim`, `work`, `sync`
+Hermes Collab Protocol is a collaboration framework for multi-device AI agent workflows. It enables teams to use Hermes, OpenCode, Codex, and other agents to work together on GitHub projects with structured task management, automatic work division, and transparent communication.
 
-The `installer.py` is only needed for the very first device that hasn't cached the skill yet.
+**Key concepts:**
+- One manifest file (`.hermes-collab.md`) defines your team and workflow
+- Devices automatically detect the protocol when cloning a repo
+- Work happens on `develop` branch — `main` is never touched
+- Agents claim tasks, work on feature branches, and create PRs
+- Communication through GitHub Issues, Discussions, Projects, and shared state
 
-## Quick Start
+**Supported agents:** Hermes (orchestrator), OpenCode (primary), Codex (parallel), and any agent with CLI access.
 
-### First Time (one-time setup)
+---
 
-```bash
-# Option 1 — Auto-install (curl | bash)
-curl -fsSL https://raw.githubusercontent.com/sambaseness/hermes-collab-protocol/main/installer.py | python3
-
-# Option 2 — Run the .exe (Windows)
-# Download hermes-collab-installer.exe from the CI/CD pipeline and double-click it
-
-# Option 3 — Run the binary (Linux/macOS)
-curl -fsSL https://raw.githubusercontent.com/sambaseness/hermes-collab-protocol/main/dist/hermes-collab-installer -o install && chmod +x install && ./install
-```
-
-### Or on any device that already has Hermes with the skill:
-
-```bash
-cd your-repo && project-collab.py init
-project-collab.py pull
-project-collab.py claim <number>
-project-collab.py work
-```
-
-## CI/CD Pipeline
-
-Every push to `main` triggers an automated pipeline via GitHub Actions:
-
-| Job | Description | Output |
-|-----|-------------|--------|
-| **Validate** | Python syntax, lint, YAML validation | Pass/Fail |
-| **Build Windows .exe** | Compiles `installer.py` to `hermes-collab-installer.exe` via PyInstaller | `.exe` artifact |
-| **Build Linux binary** | Compiles `installer.py` to `hermes-collab-installer` binary | Binary artifact |
-| **Deploy** | Verifies all protocol files are present | Pass/Fail |
-| **Release** | Creates GitHub Release on tag push | Release with binaries |
-| **Notify** | Pipeline summary | Status |
-
-### The Windows .exe
-
-The CI/CD pipeline builds a standalone Windows `.exe` from `installer.py`:
-
-- **Does not install anything by itself** — it just runs the install logic
-- Downloads `project-collab.py`, `SKILL.md`, `reference-manifest.md` to `~/.hermes/`
-- Detects platform, creates device-label, checks dependencies
-- More user-friendly than a `.sh` script for Windows users
-
-Built automatically by GitHub Actions → available as an artifact on every push to `main`.
-
-## How It Works — Full Workflow
+## How It Works
 
 ### Phase 1: Initiation
 When any device clones a repo with `.hermes-collab.md`:
@@ -109,6 +67,25 @@ project-collab.py sync          # Push state and PR updates
 hermes cron create "project sync" --script project-collab.py --schedule "every 30 minutes"
 ```
 
+---
+
+## Quick Start
+
+### First-time setup (one-time):
+```bash
+curl -fsSL https://raw.githubusercontent.com/sambaseness/hermes-collab-protocol/main/installer.py | python3
+```
+
+### On any device that already has Hermes with the skill:
+```bash
+cd your-repo && project-collab.py init
+project-collab.py pull
+project-collab.py claim <number>
+project-collab.py work
+```
+
+---
+
 ## Claiming & Assignment
 
 The claiming flow:
@@ -119,6 +96,8 @@ The claiming flow:
 5. **Sync**: `project-collab.py sync` — push state, create PRs
 
 Only one device can claim an issue at a time. Unclaimed issues are available for any device.
+
+---
 
 ## Commands
 
@@ -135,22 +114,26 @@ project-collab.py discussions   # List discussion topics
 project-collab.py project       # List project board items
 ```
 
+---
+
 ## Branch Policy
 
-- **`main`**: Never committed to directly. Protected branch. CI/CD runs here.
+- **`main`**: Never committed to directly. Protected branch.
 - **`develop`**: Integration branch. All devices push here.
 - **`feature/*`**: Individual task branches branched from `develop`.
 - Each PR must be reviewed by at least one other device before merging to `develop`.
 
-## Agent Support
+---
 
-OpenCode is the primary agent. Hermes orchestrates; OpenCode and Codex execute tasks.
+## Agent Support
 
 || Agent | Best For | When to Use |
 |-------|----------|-------------|
 | Hermes | Orchestration, full-stack coordination | Lead tasks, complex coordination |
 | OpenCode | Lightweight coding tasks | PR checks, tests, quick fixes |
 | Codex | Parallel issue fixing | Batch fixes, worktrees |
+
+---
 
 ## Key Features
 
@@ -160,8 +143,8 @@ OpenCode is the primary agent. Hermes orchestrates; OpenCode and Codex execute t
 - **GitHub integration**: Issues, Discussions, Projects, PRs via `gh` CLI
 - **Multi-agent**: Supports hermes, opencode, codex
 - **Cron-ready**: Automatic sync every 30 minutes
-- **CI/CD**: Automated builds and releases via GitHub Actions
-- **Cross-platform**: `.exe` for Windows, binary for Linux/macOS
+
+---
 
 ## Requirements
 
@@ -169,6 +152,8 @@ OpenCode is the primary agent. Hermes orchestrates; OpenCode and Codex execute t
 - `git` configured
 - Python 3.8+
 - Agent CLI (`hermes`, `opencode`, `codex`) for task execution
+
+---
 
 ## Protocol Files
 
@@ -181,7 +166,36 @@ OpenCode is the primary agent. Hermes orchestrates; OpenCode and Codex execute t
 | `reference-manifest.md` | Protocol repo | `.hermes-collab.md` template |
 | `installer.py` | Protocol repo | Cross-platform Python installer |
 | `install.sh` | Protocol repo | Legacy curl|bash installer |
-| `.github/workflows/ci-cd.yml` | Protocol repo | CI/CD pipeline (builds .exe) |
+
+---
+
+## CI/CD Pipeline
+
+Every push to `main` triggers automated builds via GitHub Actions:
+
+| Job | Runner | Output |
+|-----|--------|--------|
+| **Validate** | `ubuntu-latest` | Syntax, lint, website check |
+| **Build Linux binary** | `ubuntu-latest` | `hermes-collab-installer` |
+| **Build Mac binary** | `macos-latest` | `hermes-collab-installer` |
+| **Build Windows .exe** | `windows-latest` | `hermes-collab-installer.exe` |
+| **Release** | — | GitHub Release on tag push |
+| **Notify** | — | Pipeline summary |
+
+Binaries are uploaded as artifacts on every push. Releases are created automatically when pushing a tag.
+
+---
+
+## Downloads
+
+| Platform | Format | Link |
+|----------|--------|------|
+| Windows | `.exe` | [Download](https://github.com/sambaseness/hermes-collab-protocol/releases/tag/v1.0.0) |
+| Linux | Binary | [Download](https://github.com/sambaseness/hermes-collab-protocol/releases/tag/v1.0.0) |
+| macOS | Binary | [Download](https://github.com/sambaseness/hermes-collab-protocol/releases/tag/v1.0.0) |
+| Universal | `.py` | [installer.py](https://raw.githubusercontent.com/sambaseness/hermes-collab-protocol/main/installer.py) |
+
+---
 
 ## Example: Bitiko
 
@@ -189,6 +203,8 @@ The [bitiko](https://github.com/biramth/bitiko) project uses this protocol:
 - **Team**: sambaseness (hermes co-author), biramth (opencode author)
 - **Branch**: `develop` with `feature/*` branches
 - **Workflow**: `claim` → `work` → `sync` → PR to `develop`
+
+---
 
 ## License
 
