@@ -193,3 +193,4 @@ The [bitiko](https://github.com/biramth/bitiko) project uses this protocol:
 ## License
 
 MIT — see [LICENSE](LICENSE)
+# trigger

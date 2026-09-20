@@ -21,6 +21,7 @@ jobs:
     needs: validate
     runs-on: windows-latest
     timeout-minutes: 10
+    shell: pwsh
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -29,12 +30,12 @@ jobs:
       - run: pip install pyinstaller -q
       - run: |
           pyinstaller --name hermes-collab-installer --onefile --windowed --clean installer.py
-          echo "✓ Windows .exe built successfully"
-          ls -la dist\hermes-collab-installer.exe
+          Write-Host "✓ Windows .exe built successfully"
+          Get-ChildItem dist\
       - uses: actions/upload-artifact@v4
         with:
           name: hermes-collab-installer-windows
-          path: dist\hermes-collab-installer.exe
+          path: dist/hermes-collab-installer.exe
           retention-days: 90
 
   build-linux-binary:
@@ -81,7 +82,8 @@ jobs:
       - run: |
           echo "=== CI/CD Pipeline Complete ==="
           echo "Validate: ${{ needs.validate.result }}"
-          echo "Windows .exe: ${{ needs.build-windows-exe.result }} (windows-latest runner)"
+          echo "Windows .exe: ${{ needs.build-windows-exe.result }} (windows-latest)"
           echo "Linux binary: ${{ needs.build-linux-binary.result }}"
           echo ""
           echo "Website: https://sambaseness.github.io/hermes-collab-protocol/"
+          echo "Release: https://github.com/sambaseness/hermes-collab-protocol/releases/tag/v0.1.0"
