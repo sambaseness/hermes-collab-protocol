@@ -120,6 +120,39 @@ else
 fi
 
 # Verify agent CLIs
+
+# Install Hermes if missing (optional)
+echo ""
+echo "Checking Hermes..."
+if command -v hermes &> /dev/null; then
+    echo "  ✓ Hermes found ($(hermes --version 2>/dev/null || echo 'installed'))"
+else
+    echo "  ○ Hermes not found."
+    echo "    Install: curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash"
+    echo "    Or: hermes install"
+    echo ""
+    read -p "    Install Hermes now? (y/N) " install_hermes
+    if [[ "\$install_hermes" == "y" || "\$install_hermes" == "Y" ]]; then
+        curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+        echo "  ✓ Hermes installed"
+    fi
+fi
+
+echo ""
+echo "Checking Hermes..."
+if command -v hermes &> /dev/null; then
+    echo "  ✓ Hermes found ($(hermes --version 2>/dev/null || echo 'installed'))"
+else
+    echo "  ○ Hermes not found."
+    echo "    Install: curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash"
+    echo ""
+    read -p "    Install Hermes now? (y/N) " install_hermes
+    if [[ "$install_hermes" == "y" || "$install_hermes" == "Y" ]]; then
+        curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+        echo "  ✓ Hermes installed"
+    fi
+fi
+
 echo ""
 echo "Checking agent CLIs (optional — needed for task execution):"
 for agent in hermes claude codex opencode; do
