@@ -17,26 +17,6 @@ jobs:
       - run: pip install flake8 -q || true; flake8 installer.py project-collab.py --max-line-length=100 || true
       - run: ls docs/index.html docs/css/style.css docs/js/app.js && echo "✓ Website files present"
 
-  build-windows-exe:
-    needs: validate
-    runs-on: windows-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: pip install pyinstaller -q
-      - run: |
-          pyinstaller --name hermes-collab-installer --onefile --windowed --clean installer.py
-          echo "✓ Windows .exe built successfully"
-          ls -la dist\hermes-collab-installer.exe
-      - uses: actions/upload-artifact@v4
-        with:
-          name: hermes-collab-installer-windows
-          path: dist\hermes-collab-installer.exe
-          retention-days: 90
-
   build-linux-binary:
     needs: validate
     runs-on: ubuntu-latest
@@ -54,34 +34,77 @@ jobs:
           path: dist/hermes-collab-installer
           retention-days: 90
 
+  build-mac-binary:
+    needs: validate
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyinstaller -q
+      - run: pyinstaller --name hermes-collab-installer --onefile --console --clean installer.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hermes-collab-installer-mac
+          path: dist/hermes-collab-installer
+          retention-days: 90
+
+  build-windows-exe:
+    needs: validate
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyinstaller -q
+      - run: |
+          pyinstaller --name hermes-collab-installer --onefile --windowed --clean installer.py
+          echo "✓ Windows .exe built"
+          dir dist\
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hermes-collab-installer-windows
+          path: dist\hermes-collab-installer.exe
+          retention-days: 90
+
   release:
-    needs: [build-windows-exe, build-linux-binary]
+    needs: [build-linux-binary, build-mac-binary, build-windows-exe]
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: hermes-collab-installer-windows
+          name: hermes-collab-installer-linux
       - uses: actions/download-artifact@v4
         with:
-          name: hermes-collab-installer-linux
+          name: hermes-collab-installer-mac
+      - uses: actions/download-artifact@v4
+        with:
+          name: hermes-collab-installer-windows
       - uses: softprops/action-gh-release@v1
         with:
           files: |
-            hermes-collab-installer-windows/hermes-collab-installer.exe
             hermes-collab-installer-linux/hermes-collab-installer
+            hermes-collab-installer-mac/hermes-collab-installer
+            hermes-collab-installer-windows/hermes-collab-installer.exe
           name: Release ${{ github.ref_name }}
 
   notify:
-    needs: [validate, build-windows-exe, build-linux-binary, release]
+    needs: [validate, build-linux-binary, build-mac-binary, build-windows-exe, release]
     if: always() && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - run: |
           echo "=== CI/CD Pipeline Complete ==="
           echo "Validate: ${{ needs.validate.result }}"
-          echo "Windows .exe: ${{ needs.build-windows-exe.result }} (windows-latest runner)"
           echo "Linux binary: ${{ needs.build-linux-binary.result }}"
+          echo "Mac binary: ${{ needs.build-mac-binary.result }}"
+          echo "Windows .exe: ${{ needs.build-windows-exe.result }}"
           echo ""
           echo "Website: https://sambaseness.github.io/hermes-collab-protocol/"
+          echo "Release: https://github.com/sambaseness/hermes-collab-protocol/releases"

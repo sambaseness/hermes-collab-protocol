@@ -29,11 +29,11 @@
 html { scroll-behavior: smooth; }
 
 body {
+    overflow-x: hidden;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.7;
-    overflow-x: hidden;
 }
 
 code {
@@ -744,4 +744,30 @@ code {
 /* Smooth scroll indicator */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Agent Cards — Images */
+.agent-card img.agent-logo {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+.agent-card img.agent-wordmark {
+    width: 180px;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 0.75rem;
+    display: block;
+    filter: brightness(0) invert(1);
+}
+.agent-card.primary img.agent-wordmark {
+    filter: none;
+}
+.agent-card h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-align: center;
 }
